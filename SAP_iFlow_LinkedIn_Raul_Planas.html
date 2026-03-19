@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SAP iFlow SFTP Integration — Raul Planas</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #f3f2ef;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .li-card {
+    background: #ffffff;
+    border: 1px solid #e0ddd6;
+    border-radius: 12px;
+    overflow: visible;
+    width: 100%;
+    max-width: 680px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .li-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 16px 0;
+  }
+
+  .li-avatar {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: #0070F2;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 16px; color: #fff;
+    flex-shrink: 0;
+  }
+
+  .li-name { font-size: 14px; font-weight: 600; color: #000000e6; margin-bottom: 1px; }
+  .li-title { font-size: 12px; color: #00000099; margin-bottom: 1px; }
+  .li-time { font-size: 11px; color: #00000066; }
+
+  .li-body {
+    padding: 12px 16px 0;
+    font-size: 14px;
+    color: #000000e6;
+    line-height: 1.7;
+    white-space: pre-line;
+  }
+
+  .li-hashtags {
+    padding: 6px 16px 14px;
+    font-size: 13px;
+    color: #0a66c2;
+    line-height: 1.9;
+  }
+
+  .diagram-wrap {
+    margin: 0 16px 16px;
+    border: 1px solid #e0ddd6;
+    border-radius: 8px;
+    overflow: visible;
+    background: #f9f8f6;
+    position: relative;
+  }
+
+  .hint {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: #00000066;
+    background: #ffffff;
+    border-bottom: 1px solid #e0ddd6;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+  }
+
+  #tooltip {
+    display: none;
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #c0bdb5;
+    border-left: 3px solid #534AB7;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #000000e6;
+    line-height: 1.6;
+    max-width: 260px;
+    pointer-events: none;
+    z-index: 999;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  #tooltip strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: #000000e6;
+  }
+
+  .hoverable { cursor: pointer; }
+  .hoverable rect, .hoverable circle, .hoverable polygon { transition: opacity 0.18s; }
+  .hoverable:hover rect, .hoverable:hover circle, .hoverable:hover polygon { opacity: 0.75; }
+
+  .li-actions {
+    display: flex;
+    border-top: 1px solid #e0ddd6;
+  }
+
+  .li-action {
+    flex: 1;
+    text-align: center;
+    padding: 10px 4px;
+    font-size: 13px;
+    color: #00000099;
+    border-right: 1px solid #e0ddd6;
+    cursor: pointer;
+  }
+  .li-action:last-child { border-right: none; }
+  .li-action:hover { background: #f3f2ef; border-radius: 0 0 4px 4px; }
+</style>
+</head>
+<body>
+
+<div class="li-card">
+
+  <!-- Header -->
+  <div class="li-header">
+    <div class="li-avatar">RP</div>
+    <div>
+      <div class="li-name">Raul Planas</div>
+      <div class="li-title">SAP Integration Developer · BTP · iFlow · SFTP</div>
+      <div class="li-time">Just now · 🌐</div>
+    </div>
+  </div>
+
+  <!-- Post body -->
+  <div class="li-body">Recently, someone posed a challenge to build an end-to-end file delivery system utilising third party tools and SAP Integration Suite, trial account. I built it and I want to break down exactly how it works.
+
+The goal: automate secure file transfer from SAP to a Linux server, with zero manual intervention.
+
+Here's the full stack I implemented:
+
+🔹 SAP Integration Suite (iFlow)
+→ Designed the integration flow with a Content Modifier to shape the message payload
+→ Configured the SFTP Receiver Adapter for outbound file delivery
+
+🔹 Network layer
+→ SSH-encrypted connection over the public internet
+→ Fixed egress IP allowlisted on the target server firewall
+
+🔹 Linux VM (Google Cloud)
+→ SFTP daemon (sshd) authenticates the incoming connection
+→ File lands in /home/sftpuser — fully automated, no manual steps
+
+The result: a PDF file delivered reliably from SAP to a remote server via a secure, production-grade pipeline.
+
+This project gave me hands-on experience across SAP BTP, SFTP protocol configuration, Linux server administration, and cloud networking — end to end.
+
+Open to SAP Integration / BTP roles. If you're hiring or know someone who is, I'd love to connect.</div>
+
+  <div class="li-hashtags">#SAPIntegrationSuite #SAP #BTP #iFlow #SFTP #CloudIntegration #EnterpriseTech #OpenToWork</div>
+
+  <!-- Diagram -->
+  <div class="diagram-wrap">
+    <div class="hint">Hover over any component to learn what it does</div>
+    <div id="tooltip"></div>
+
+    <svg width="100%" viewBox="0 0 680 760" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <!-- Sender -->
+    <g class="hoverable" data-tip="&lt;strong&gt;① Sender — participant&lt;/strong&gt;The system that triggers the integration. Any app or scheduled job that needs to deliver a file securely into SAP Integration Suite.">
+      <rect x="8" y="50" width="70" height="72" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+      <text x="43" y="82" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#2C2C2A">Sender</text>
+      <text x="43" y="98" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A">participant</text>
+    </g>
+
+    <!-- SFTP left -->
+    <g class="hoverable" data-tip="&lt;strong&gt;② SFTP adapter (inbound)&lt;/strong&gt;The dashed blue line is the SFTP connector — it speaks Secure File Transfer Protocol, the standard for encrypted file delivery over a network.">
+      <circle cx="90" cy="86" r="4" fill="white" stroke="#378ADD" stroke-width="1.2"/>
+      <line x1="94" y1="86" x2="132" y2="86" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+      <text x="113" y="78" text-anchor="middle" font-size="10" fill="#185FA5">SFTP</text>
+    </g>
+
+    <!-- Integration Process -->
+    <g class="hoverable" data-tip="&lt;strong&gt;③ SAP Integration Process&lt;/strong&gt;The container inside SAP BTP where all integration logic lives. Built on a free trial account — messages enter, get processed, and exit here automatically.">
+      <rect x="140" y="14" width="388" height="148" rx="8" fill="none" stroke="#378ADD" stroke-width="1"/>
+      <rect x="140" y="6" width="32" height="16" rx="3" fill="#0070F2"/>
+      <text x="156" y="17" text-anchor="middle" dominant-baseline="central" font-size="9" font-weight="500" fill="#fff">SAP</text>
+      <text x="334" y="30" text-anchor="middle" font-size="10" fill="#185FA5">Integration process</text>
+    </g>
+
+    <!-- Start -->
+    <g class="hoverable" data-tip="&lt;strong&gt;④ Start event&lt;/strong&gt;Triggered the moment a message arrives. It wakes up the iFlow and begins executing the integration steps in sequence.">
+      <circle cx="184" cy="86" r="20" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
+      <rect x="172" y="77" width="24" height="18" rx="2" fill="none" stroke="#5F5E5A" stroke-width="1.2"/>
+      <line x1="172" y1="77" x2="184" y2="87" stroke="#5F5E5A" stroke-width="1.2"/>
+      <line x1="196" y1="77" x2="184" y2="87" stroke="#5F5E5A" stroke-width="1.2"/>
+      <text x="184" y="112" text-anchor="middle" font-size="10" fill="#5F5E5A">Start</text>
+    </g>
+
+    <line x1="204" y1="86" x2="252" y2="86" stroke="#888780" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- Content Modifier -->
+    <g class="hoverable" data-tip="&lt;strong&gt;⑤ Content modifier 1&lt;/strong&gt;The brain of the flow. Sets the file name, enriches headers, and shapes the message body — preparing the PDF payload for secure outbound delivery.">
+      <rect x="252" y="60" width="144" height="52" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+      <circle cx="324" cy="58" r="5" fill="#EF9F27" stroke="#BA7517" stroke-width="0.8"/>
+      <text x="324" y="83" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#3C3489">Content modifier 1</text>
+      <text x="324" y="100" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#534AB7">Sets message body/headers</text>
+    </g>
+
+    <line x1="396" y1="86" x2="436" y2="86" stroke="#888780" stroke-width="1.5" marker-end="url(#arr)"/>
+
+    <!-- End -->
+    <g class="hoverable" data-tip="&lt;strong&gt;⑥ End event&lt;/strong&gt;Signals that all integration logic is complete. The processed message is handed off to the outbound SFTP adapter for delivery to the Linux server.">
+      <circle cx="458" cy="86" r="20" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
+      <circle cx="458" cy="86" r="16" fill="none" stroke="#5F5E5A" stroke-width="2.5"/>
+      <rect x="447" y="77" width="22" height="17" rx="2" fill="none" stroke="#5F5E5A" stroke-width="1.1"/>
+      <line x1="447" y1="77" x2="458" y2="86" stroke="#5F5E5A" stroke-width="1.1"/>
+      <line x1="469" y1="77" x2="458" y2="86" stroke="#5F5E5A" stroke-width="1.1"/>
+      <text x="458" y="112" text-anchor="middle" font-size="10" fill="#5F5E5A">End</text>
+    </g>
+
+    <!-- SFTP right -->
+    <g class="hoverable" data-tip="&lt;strong&gt;⑦ SFTP Receiver Adapter&lt;/strong&gt;Pushes the file over an SSH-encrypted connection to the target Linux server. The warning triangle flags a configuration note such as host key or credential setup.">
+      <circle cx="480" cy="86" r="4" fill="white" stroke="#378ADD" stroke-width="1.2"/>
+      <line x1="484" y1="86" x2="538" y2="86" stroke="#378ADD" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arr)"/>
+      <polygon points="508,74 518,93 498,93" fill="#EF9F27" stroke="#BA7517" stroke-width="0.8"/>
+      <text x="508" y="87" text-anchor="middle" dominant-baseline="central" font-size="8" font-weight="500" fill="#412402">!</text>
+      <text x="511" y="69" text-anchor="middle" font-size="10" fill="#185FA5">SFTP</text>
+    </g>
+
+    <!-- Receiver -->
+    <g class="hoverable" data-tip="&lt;strong&gt;⑧ Receiver — participant&lt;/strong&gt;The destination system — the Linux VM on Google Cloud. It receives the file and stores it in the designated SFTP user directory automatically.">
+      <rect x="548" y="50" width="76" height="72" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+      <text x="586" y="82" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#2C2C2A">Receiver</text>
+      <text x="586" y="98" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#5F5E5A">participant</text>
+    </g>
+
+    <!-- Bridge iFlow to Layer 1 -->
+    <line x1="334" y1="162" x2="334" y2="198" stroke="#B4B2A9" stroke-width="1.2" marker-end="url(#arr)"/>
+    <text x="334" y="183" text-anchor="middle" font-size="10" fill="#888780">Outbound SFTP connection</text>
+
+    <!-- Layer 1 SAP IS -->
+    <g class="hoverable" data-tip="&lt;strong&gt;SAP Integration Suite (iFlow)&lt;/strong&gt;Cloud-based middleware on SAP BTP. Hosts the iFlow pipeline and SFTP Receiver Adapter. Built entirely on a free trial account — no enterprise licence needed.">
+      <rect x="50" y="198" width="580" height="106" rx="14" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+      <text x="340" y="220" text-anchor="middle" font-size="12" font-weight="500" fill="#3C3489">SAP Integration Suite (iFlow)</text>
+      <rect x="78" y="232" width="196" height="56" rx="8" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+      <text x="176" y="257" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#26215C">iFlow pipeline</text>
+      <text x="176" y="274" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#3C3489">Message processing &amp; routing</text>
+      <line x1="274" y1="260" x2="400" y2="260" stroke="#7F77DD" stroke-width="1.2" marker-end="url(#arr)"/>
+      <rect x="402" y="232" width="196" height="56" rx="8" fill="#CECBF6" stroke="#534AB7" stroke-width="0.5"/>
+      <text x="500" y="257" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#26215C">SFTP Receiver Adapter</text>
+      <text x="500" y="274" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#3C3489">Establishes secure file transfer</text>
+    </g>
+    <text x="38" y="260" text-anchor="middle" font-size="10" fill="#888780">①</text>
+
+    <!-- Bridge 1 to 2 -->
+    <line x1="334" y1="304" x2="334" y2="336" stroke="#B4B2A9" stroke-width="1.2" marker-end="url(#arr)"/>
+    <text x="334" y="322" text-anchor="middle" font-size="10" fill="#888780">SSH-encrypted payload</text>
+
+    <!-- Layer 2 Internet -->
+    <g class="hoverable" data-tip="&lt;strong&gt;Internet — SSH-encrypted tunnel&lt;/strong&gt;The file travels over the public internet, fully protected by SSH encryption. A fixed egress IP is allowlisted at the firewall so only trusted SAP traffic is accepted.">
+      <rect x="50" y="336" width="580" height="106" rx="14" fill="#E6F1FB" stroke="#185FA5" stroke-width="0.5"/>
+      <text x="340" y="358" text-anchor="middle" font-size="12" font-weight="500" fill="#0C447C">Internet connection (SFTP / SSH)</text>
+      <rect x="200" y="372" width="280" height="56" rx="10" fill="#B5D4F4" stroke="#185FA5" stroke-width="0.5"/>
+      <text x="340" y="397" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#042C53">Public egress IP</text>
+      <text x="254" y="414" text-anchor="start" dominant-baseline="central" font-size="10" fill="#0C447C">130.211.</text>
+      <text x="303" y="414" text-anchor="start" dominant-baseline="central" font-size="10" fill="#B4B2A9">███</text>
+      <text x="323" y="414" text-anchor="start" dominant-baseline="central" font-size="10" fill="#0C447C">.13 (allowlisted)</text>
+    </g>
+    <text x="38" y="397" text-anchor="middle" font-size="10" fill="#888780">②</text>
+
+    <!-- Bridge 2 to 3 -->
+    <line x1="334" y1="442" x2="334" y2="474" stroke="#B4B2A9" stroke-width="1.2" marker-end="url(#arr)"/>
+    <text x="334" y="460" text-anchor="middle" font-size="10" fill="#888780">File arrives at Linux VM</text>
+
+    <!-- Layer 3 Linux VM -->
+    <g class="hoverable" data-tip="&lt;strong&gt;Linux VM — Google Cloud&lt;/strong&gt;The destination server. The SFTP daemon (sshd) authenticates the incoming SSH connection, then deposits the file into /home/sftpuser — fully automated, zero manual steps.">
+      <rect x="50" y="474" width="580" height="106" rx="14" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+      <text x="205" y="496" text-anchor="middle" font-size="12" font-weight="500" fill="#085041">Linux VM — instance-20260315-</text>
+      <text x="455" y="496" text-anchor="middle" font-size="12" font-weight="500" fill="#B4B2A9">██████</text>
+      <rect x="78" y="510" width="210" height="54" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+      <text x="183" y="534" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#04342C">SFTP daemon (sshd)</text>
+      <text x="183" y="551" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#085041">Authenticates &amp; accepts files</text>
+      <line x1="288" y1="537" x2="386" y2="537" stroke="#1D9E75" stroke-width="1.2" marker-end="url(#arr)"/>
+      <rect x="388" y="510" width="210" height="54" rx="8" fill="#9FE1CB" stroke="#0F6E56" stroke-width="0.5"/>
+      <text x="493" y="534" text-anchor="middle" dominant-baseline="central" font-size="12" font-weight="500" fill="#04342C">SFTP user directory</text>
+      <text x="493" y="551" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#085041">/home/sftpuser</text>
+    </g>
+    <text x="38" y="534" text-anchor="middle" font-size="10" fill="#888780">③</text>
+
+    <!-- Bridge 3 to 4 -->
+    <line x1="334" y1="580" x2="334" y2="612" stroke="#B4B2A9" stroke-width="1.2" marker-end="url(#arr)"/>
+    <text x="334" y="598" text-anchor="middle" font-size="10" fill="#888780">File written to disk</text>
+
+    <!-- Layer 4 Output -->
+    <g class="hoverable" data-tip="&lt;strong&gt;④ File delivered!&lt;/strong&gt;The end result — the PDF lands on the Linux server automatically. Production-grade pipeline, built on a free SAP trial account using only third-party tools and an iFlow.">
+      <rect x="180" y="612" width="300" height="62" rx="12" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+      <text x="330" y="637" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="500" fill="#412402">File delivered by iFlow</text>
+      <text x="330" y="655" text-anchor="middle" dominant-baseline="central" font-size="10" fill="#633806">Raul_Planas_4pg.pdf</text>
+    </g>
+    <text x="163" y="643" text-anchor="middle" font-size="10" fill="#888780">④</text>
+
+    </svg>
+  </div>
+
+  <!-- Actions bar -->
+  <div class="li-actions">
+    <div class="li-action">👍 Like</div>
+    <div class="li-action">💬 Comment</div>
+    <div class="li-action">🔁 Repost</div>
+    <div class="li-action">✉️ Send</div>
+  </div>
+
+</div>
+
+<script>
+const tip = document.getElementById('tooltip');
+const wrap = document.querySelector('.diagram-wrap');
+
+document.querySelectorAll('[data-tip]').forEach(el => {
+  el.addEventListener('mouseenter', function() {
+    tip.innerHTML = this.getAttribute('data-tip');
+    tip.style.display = 'block';
+  });
+  el.addEventListener('mousemove', function(e) {
+    const rect = wrap.getBoundingClientRect();
+    let x = e.clientX - rect.left + 14;
+    let y = e.clientY - rect.top + 14;
+    if (x + 270 > rect.width) x = e.clientX - rect.left - 278;
+    if (y + 130 > rect.height) y = e.clientY - rect.top - 130;
+    tip.style.left = x + 'px';
+    tip.style.top = y + 'px';
+  });
+  el.addEventListener('mouseleave', function() {
+    tip.style.display = 'none';
+  });
+});
+</script>
+
+</body>
+</html>
